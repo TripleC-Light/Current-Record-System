@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<html lang="zh-Hant">
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>電流紀錄系統</title>
+	<link rel="stylesheet" type="text/css" href="./static/myCSS.css">
+	<script language=javascript>
+		var _status = new Boolean(false);
+		var monster = new Monster('bug');
+		var robot1 = new Monster('Robot1');
+		var autoControlStart = new Boolean(false);
+		var autoControlTime = 10;
+		var keyPoint = [];
+
+        $(document).ready(function (){
+			if(isMobile()){
+				console.log('This is Mobile')
+			}else{
+				console.log('This is PC or else')
+			}
+			getSerialList();
+        });
+
+		function isMobile() {
+			try{ document.createEvent("TouchEvent"); return true; }
+			catch(e){ return false;}
+		}
+
+		function addSelectOption(list, text, value){
+			var index = document.getElementById(list).length
+			document.getElementById(list).options[index] = new Option(text, value);
+		}
+		function getSerialList(){
+		    var _xmlhttp;
+		    _xmlhttp = new XMLHttpRequest();
+		    _xmlhttp.onreadystatechange = function(){
+		        if (_xmlhttp.readyState==4 && _xmlhttp.status==200){
+		        	var _HTML = _xmlhttp.responseText;
+		        	_HTML = _HTML.split(',');
+		        	for(var i=0; i<_HTML.length; i++){
+		        		if(_HTML[i]!=''){
+		        			addSelectOption('serialList', _HTML[i], i);
+		        			console.log(_HTML[i]);
+		        		}
+		        	}
+		        }
+		    }
+		    _xmlhttp.open("GET","/serialconnect?cmd=getList", true);
+		    _xmlhttp.send();
+		}
+		function connectSerial(list){
+			reBorn();
+			var _cmd = 'connectUART'
+			if( document.getElementById('connectSerialBtn').value == '中斷序列埠' ){
+				_cmd = 'disConnectUART'
+			}
+			var textTemp = document.getElementById('exeState').innerHTML;
+			var index = document.getElementById(list).selectedIndex
+		    var _xmlhttp;
+		    _xmlhttp = new XMLHttpRequest();
+		    _xmlhttp.onreadystatechange = function(){
+		        if (_xmlhttp.readyState==4 && _xmlhttp.status==200){
+		        	var _HTML = _xmlhttp.responseText;
+		        	if(_HTML=='OK'){
+		        		if( _cmd == 'connectUART' ){
+							addText("#exeState", "序列埠連接完成\n");
+							document.getElementById('connectSerialBtn').value = '中斷序列埠';
+			        		document.getElementById('serialList').style = 'pointer-events:none;color:#BBB;';
+		        		}else{
+							addText("#exeState", "序列埠中斷完成\n");
+							document.getElementById('connectSerialBtn').value = '連接序列埠';
+			        		document.getElementById('serialList').style = 'color:#000;';
+		        		}
+		        	}else{
+						addText("#exeState", '序列埠連接失敗\n');
+		        	}
+		        }
+		    }
+		    _xmlhttp.open("GET","/index?cmd=" + _cmd + "&serialIndex="+index, true);
+		    _xmlhttp.send();
+		}
+
+		function sendCMD(CMD){
+			console.log('SendCMD')
+		    var _xmlhttp;
+		    _xmlhttp = new XMLHttpRequest();
+		    _xmlhttp.onreadystatechange = function(){
+		        if (_xmlhttp.readyState==4 && _xmlhttp.status==200){
+		        	var _HTML = _xmlhttp.responseText;
+					console.log(_HTML)
+					_HTML = _HTML.split(' ');
+					if( _HTML.length==1 ){
+						_HTML[1] = _HTML[0];
+					}
+					console.log(_HTML[0])
+		        	if( _HTML[0]=='OK' ){
+						addText("#exeState", "回傳資料: " + _HTML[1]);
+						_HTML[1] = _HTML[1].replace('\r\n', '');
+						_HTML[1] = parseFloat(_HTML[1]);
+						_HTML[1] = _HTML[1].toFixed(1);
+						_CMD = CMD.split('*');
+						switch(_CMD[1]) {
+						     case 'Temp':
+						        console.log('溫度為: ' + _HTML[1]);
+						        document.getElementById('Temp').innerHTML = _HTML[1] + '&deg;C';
+						        break;
+						     case 'Hum':
+						        console.log('濕度為: ' + _HTML[1]);
+						        document.getElementById('Hum').innerHTML = _HTML[1] + '%';
+						        break;
+						     case 'CheckWaterLevel':
+						        console.log('儲水量: ' + _HTML[1]);
+						        if( _HTML[1]>=10 ){
+									document.getElementById('waterTankInfo').innerHTML = '充足';
+									document.getElementById('waterTank').style.backgroundImage = 'url("./static/waterTank.png")';
+						        }else{
+									document.getElementById('waterTankInfo').innerHTML = '不足';
+									document.getElementById('waterTank').style.backgroundImage = 'url("./static/waterTank_nowater.png")';
+						        }
+						        break;
+						     case 'SoilHum1':
+						        console.log('土壤1濕度為: ' + _HTML[1]);
+						        document.getElementById('plant0').innerHTML = _HTML[1];
+						        break;
+						     case 'SoilHum2':
+						        console.log('土壤2濕度為: ' + _HTML[1]);
+						        document.getElementById('plant1').innerHTML = _HTML[1];
+						        break;
+						     case 'SoilHum3':
+						        console.log('土壤3濕度為: ' + _HTML[1]);
+						        document.getElementById('plant2').innerHTML = _HTML[1];
+						        break;
+						     case 'SoilHum4':
+						        console.log('土壤4濕度為: ' + _HTML[1]);
+						        document.getElementById('plant3').innerHTML = _HTML[1];
+						        break;
+						     default:
+						        console.log('其他');
+						}
+						return true;
+		        	}else if( _HTML[0]=='ERR' ){
+						addText("#exeState", "執行錯誤: " + _HTML[1] + '\n');
+						return false;
+		        	}else{
+						addText("#exeState", "未知錯誤" + '\n');
+						return false;
+		        	}
+		        }
+		    }
+		    _xmlhttp.open("GET","/index?cmd=" + CMD, true);
+		    _xmlhttp.send();
+		}
+
+		function addText(textAreaID, string){
+			var textarea = $(textAreaID).append(string);
+			textarea.scrollTop(textarea[0].scrollHeight);
+		}
+
+	</script>
+</head>
+<body class="mainCSS">
+<center>
+	<div style="width:80%">
+		<div class='titleCSS'>電流記錄系統</div>
+		<div style="display:inline-block;width:20%;vertical-align:top;margin-right:10px;">
+			<div class="toolBox">
+				<div style="border-radius:8px 8px 0px 0px;font-size:22px;
+							text-align:center;
+							background-color:#C8FFC8;
+							font-weight:bolder;
+							height:40px;">設定</div>
+				<div id="addrAndCMD" style="background-color:#C8FFC8;font-size:14px;text-align:center;color:#F00">&nbsp;</div>
+
+				<table>
+					<tr><td>ADC參考電壓</td><td></td><td>volt</td></tr>
+					<tr><td>ADC精度</td><td></td><td>bits</td></tr>
+					<tr><td>取樣電阻</td><td></td><td>ohm</td></tr>
+					<tr><td>取樣時間</td><td></td><td>ms</td></tr>
+					<tr><td>取樣電流閥值</td><td></td><td>mA</td></tr>
+					<tr><td>中斷採樣等待時間</td><td></td><td>mS</td></tr>
+				</table>
+				<div style="text-align:left;">&#10148 TEST</div>
+						<div class="settingBtn">
+							 TEST2
+						</div>
+
+			</div>
+		</div>
+		<div style="display:inline-block;width:78%;vertical-align:top;">
+			<div class="workSpace" style="text-align:center;vertical-align:middle;width:auto;">
+				<select id='serialList' class="selectCSS"></select>
+				<input id='connectSerialBtn' class='serialBtn' type="button" value="連接序列埠" onclick="connectSerial('serialList')">
+			</div>
+
+			<div class="workSpace" style="width:auto;"><center>
+				<div style="display:inline-block;width:140px;vertical-align:top;">
+					<div id='autoControl' class="autoControl" onclick="autoControlBtn()">全自動監控</div>
+					<div id='autoControlInfo' style="color:#F00;font-size:15px;">(尚未執行)</div>
+					<div style="height:20px;"></div>
+					<div style="text-align:left;margin:10px 5px;">
+						<div style="display:table-cell;"><img src="./static/temp.png" style="width:50px"></div>
+						<div style="display:table-cell;color:#F00;font-size:30px;vertical-align:middle;" id='Temp'>30.5&deg;C</div>
+					</div>
+					<div style="text-align:left;;margin:10px 5px;">
+						<div style="display:table-cell;"><img src="./static/hum.png" style="width:50px"></div>
+						<div style="display:table-cell;color:#00F;font-size:30px;vertical-align:middle;" id='Hum'>60%</div>
+					</div>
+				</div>
+
+ 				<div style="display:inline-block;text-align:center;width:auto;vertical-align:top;">
+					<div class="relative">
+					<div id='bug' class="caterpillar" onclick="hitBug()"></div>
+					<div id='bugLife' class="bugLife"></div>
+					<div id='Robot1' class="caterpillar" onclick="hitRobot()"></div>
+					<div class="gardan" style="white-space:nowrap;">
+					</div>		
+					</div>
+				</div>
+
+				<div style="display:inline-block;width:140px;vertical-align:bottom;"><center>
+					<div id='waterTank' class='waterTank'></div>
+					<div class='waterTankInfo'>儲水量: <span id='waterTankInfo'>充足</span></div>
+				</center></div> 
+			</center></div>
+			<div class="workSpace">
+			<textarea id="exeState" class='debugInfo'></textarea>
+			</div>
+		</div>
+	</div>
+</center>
+
+</body>
+</html>

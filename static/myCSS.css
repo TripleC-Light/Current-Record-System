@@ -1,0 +1,193 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+
+.mainCSS{
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #EEE;
+}
+.trCSS, .tdCSS {
+    border: 1px solid #000000;
+}
+div {
+    border: 1px solid #AAA;
+}
+.titleCSS{
+	color: #00F;
+	font-size: 30px;
+	text-align:center;
+	border: 3px solid #00F;
+	border-style: dashed;
+	background-color: #FFF;
+	border-radius: 10px;
+	padding: 5px;
+	margin: 0px 0px 10px 0px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+.settingBtn {
+    font-size: 16px;
+    color: #00F;
+    text-align: center;
+    vertical-align: middle;
+    line-height: -2px;
+    height: 25px;
+    padding: 0px 5px;
+    border: solid 1px #00F;
+    border-radius: 3px;
+    background: #EEEEFF;
+    text-decoration: none;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px rgba(20%,20%,20%,0.0);
+    transition: all 0.1s;
+    margin: 10px;
+    white-space:nowrap;
+}
+.settingBtn:hover{
+    border: solid 2px;
+    box-shadow: 0px 0px 8px rgba(20%,20%,20%,0.5);
+}
+.settingBtn:active{
+    font-size: 17px;
+}
+.waterTable{
+    border: 0px solid #000000;
+	background: #fff;
+	height: 30px;
+	font-size: 13px;
+	color: #DDD;
+	text-align: center;
+}
+.toolBox{
+	width: 100%;
+	background-color: #FFF;
+	border-radius: 10px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+	border: 3px solid #00F;
+	border-style: dashed;
+}
+.workSpace{
+	background-color: #FFF;
+	border: 3px solid #00F;
+	border-style: dashed;
+	border-radius: 10px;
+	width: 98%;
+	padding: 5px;
+	margin: 0px 0px 10px 0px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+
+.relative {
+	position: relative;
+}
+.gardan{
+	text-align: center;
+	border: 5px solid #804000;
+	border-radius: 20px;
+	width: auto;
+	height: 100%;
+	margin: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+    background-image: url("./gardan_back.png");
+}
+.selectCSS{
+	margin: 5px;
+	border: 3px solid #F00;
+	border-radius: 10px;
+	height: 30px;
+	font-size: 18px;
+}
+.serialBtn{
+	margin: 2px;
+	font-family: 'Noto Sans TC', sans-serif;
+	background-color: #FFF;
+	color: #F00;
+	border:2px solid #F00;
+	border-radius: 7px;
+	font-size: 17px;
+	height: 31px;
+}
+.debugInfo{
+	padding: 5px 15px;
+	font-family: 'Noto Sans TC', sans-serif;
+	color: #555;
+	border-radius: 10px;
+	font-size: 17px;
+	border: 0px solid #F00;
+	width: 95%;
+	height: 100px;
+	resize:none;
+}
+.plantInfo{
+	text-align: center;
+	width: 100px;
+	border: 3px solid #6C3E3F;
+	color: #FF0;
+	border-radius: 0px 20px 0px 20px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-image: url("./wooden.png");
+}
+.autoControl{
+	text-align: center;
+	line-height: 40px;
+	width: 90%;
+	height: 40px;
+	border: 5px solid #00F;
+	border-radius: 0px 10px 0px 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+	border-style: outset;
+	font-size: 20px;
+	color: #00F;
+	font-weight: bolder;
+    user-select: none;
+    cursor: pointer;
+    margin: 10px 5px;
+}
+.autoControl:hover{
+    border: 5px solid #00F;
+    background-color: #EEE;
+}
+.autoControl:active{
+	border-style: inset;
+    font-size: 18px;
+}
+
+.waterTank{
+    background-size: contain;
+    background-repeat: no-repeat;
+	margin-bottom: 10px;
+	width: 100px;
+	height: 100px;
+    background-image: url("./waterTank.png");
+}
+.waterTankInfo{
+	text-align: center;
+	width: 90%;
+	height: 40px;
+	line-height: 40px;
+	font-size: 20px;
+	border: 3px solid #00F;
+	color: #00F;
+	border-radius: 0px 15px 0px 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+    white-space:nowrap;
+}
+
+.caterpillar{
+	position: absolute;
+    border: 0px solid #000000;
+    height: 60px;
+    width: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    /*background-image: url("./Caterpillar.png");*/
+    visibility: hidden;
+}
+.bugLife{
+	position: absolute;
+    border: 0px solid #000000;
+	border-radius: 5px;
+    height: 5px;
+    width: 60px;
+    background-color: #0FF;
+    display: none;
+}
