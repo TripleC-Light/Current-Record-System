@@ -24,19 +24,21 @@ class CurrentOperate:
     def get_TotalmAmS(self, currentTable):
         self.currentTable = currentTable
         _tatalmAmS = 0
-        _mS = 1 / (343 / 1000)
+        # _mS = 1 / (343 / 1000)
+        _mS = (343/1000) / 1    # 每一個 sample time佔 1ms的多少
         maxCurrent = (self.refVoltage / self.sampleResistor) * 1000     # mA
         for _current in self.currentTable:
             data = _current.split(", ")
             _current = float(data[3].replace(" mA", ""))
             if _current < maxCurrent:
-                mAmS = _current / _mS
+                # mAmS = _current / _mS
+                mAmS = _current * _mS   # 此次 sample current乘上取樣時間在 1ms的佔比, 即為每 1ms的電流
                 _tatalmAmS += mAmS
         self.tatalmAmS = round(_tatalmAmS, 6)
         return self.tatalmAmS
 
     def get_TotalmAH(self, tatalmAmS):
-        _totalmAH = (tatalmAmS / 1000) / 3600
+        _totalmAH = (tatalmAmS / 1000) / 3600   # 先將 mAmS轉換為 mAS, 再轉換為 mAH
         self.totalmAH = format(_totalmAH, '.10f')
         return self.totalmAH
 
@@ -95,11 +97,7 @@ ser.set_buffer_size(rx_size=1000000)
 ser.isOpen()
 
 adcValue = 0
-# voltageScale = 3.3 / 1024
-# sampleEveryMicroSecond = 343  # 343.5us
-# currentResistor = 10  # ohm
 currentLevel = 2  # mA
-# timeOut = 0.3  # second
 
 # timeTag = 0
 # dataCount = 0
