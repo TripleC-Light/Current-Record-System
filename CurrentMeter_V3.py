@@ -102,6 +102,9 @@ adcValue = 0
 currentLevel = 2  # mA
 
 tStart = time.time()
+tStart0 = tStart
+state = 0
+exeOnlyOneTime = True
 currentTable = []
 
 print('===========================================')
@@ -117,62 +120,14 @@ print('> Create File:', filename)
 
 try:
     while True:
-        # if state == 0:
-        #     continueTime = 1 * 60 * 60
-        #     #continueTime = 30
-        #     pEND = time.time()
-        #     if exeOnlyOneTime:
-        #         exeOnlyOneTime = False
-        #         filename = "Current_" + time.strftime("%Y%m%d%H%M", time.localtime()) + "_T3.txt"
-        #         f = open(filename, 'w')
-        #         f.close()
-        #         print(filename)
-        #     if (pEND - tStart0) > continueTime:
-        #         #pEND1 = time.time()
-        #         #state = 4
-        #         #exeOnlyOneTime = True
-        #         break
-        """elif state == 1:
-            continueTime = (23 * 60 * 60) + (55 * 60)
-            # continueTime = 5*60
-            while ((pEND1 - pEND) < continueTime):
-                pEND1 = time.time()
-                print("Wait-- " + str(time.strftime("%H:%M:%S", time.localtime())))
-                time.sleep(60)
-            pEND1 = time.time()
-            state = 2
-
-        elif state == 2:
-            continueTime = 48 * 60 * 60
+        if state == 0:
+            continueTime = 2.5 * 60 * 60
+            # continueTime = 15
             pEND = time.time()
             if exeOnlyOneTime:
                 exeOnlyOneTime = False
-                filename = "Current_" + time.strftime("%Y%m%d%H%M", time.localtime()) + "_T1T2.txt"
-                f = open(filename, 'w')
-                f.close()
-                print(filename)
-            if (pEND - tStart1) > continueTime:
-                pEND1 = time.time()
-                state = 3
-                exeOnlyOneTime = True
-
-        elif state == 3:
-            continueTime = 72 * 60 * 60
-            pEND = time.time()
-            if exeOnlyOneTime:
-                exeOnlyOneTime = False
-                filename = "Current_" + time.strftime("%Y%m%d%H%M", time.localtime()) + "_T3.txt"
-                f = open(filename, 'w')
-                f.close()
-                print(filename)
-            if (pEND - tStart1) > continueTime:
-                pEND1 = time.time()
-                state = 4
-                exeOnlyOneTime = True
+            if (pEND - tStart0) > continueTime:
                 break
-
-        elif state == 4:
-            break"""
 
         if ser.in_waiting:
             goodADCvalue = True
