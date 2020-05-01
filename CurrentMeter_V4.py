@@ -59,7 +59,7 @@ class CurrentOperate:
                     writeData = '-, -, ' + currentData[2] + ', ' + currentData[3]
                     f.write(writeData + "\n")
 
-        writeData = _date + ", " + _time + ", 0, 0, " + str(self.tatalmAmS) + ', ' + str(self.totalmAH)
+        writeData = _date + ", " + _time + ", " + currentData[2] + ", 0, " + str(self.tatalmAmS) + ', ' + str(self.totalmAH)
         f.write(writeData + "\n")
         f.close()
         print("> Write to File")
