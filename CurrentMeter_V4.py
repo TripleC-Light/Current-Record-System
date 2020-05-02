@@ -25,14 +25,12 @@ class CurrentOperate:
     def get_TotalmAmS(self, currentTable):
         self.currentTable = currentTable
         _tatalmAmS = 0
-        # _mS = 1 / (343 / 1000)
         _mS = (self.sampleEveryMicroSecond/1000) / 1    # 每一個 sample time佔 1ms的多少
         maxCurrent = (self.refVoltage / self.sampleResistor) * 1000     # mA
         for _current in self.currentTable:
             data = _current.split(", ")
             _current = float(data[3].replace(" mA", ""))
             if _current < maxCurrent:
-                # mAmS = _current / _mS
                 mAmS = _current * _mS   # 此次 sample current乘上取樣時間在 1ms的佔比, 即為每 1ms的電流
                 _tatalmAmS += mAmS
         self.tatalmAmS = round(_tatalmAmS, 6)
