@@ -7,14 +7,15 @@ import serial.tools.list_ports
 
 class CurrentOperate:
     def __init__(self):
-        self.refVoltage = 3.3
-        self.ADCresolution = 10
+        self.refVoltage = 0
+        self.ADCresolution = 0
         self.voltageScale = self.refVoltage / (2**self.ADCresolution)
-        self.sampleResistor = 10    #ohm
+        self.sampleResistor = 0    #ohm
         self.currentTable = []
         self.tatalmAmS = 0
         self.totalmAH = 0
-        self.sampleEveryMicroSecond = 343
+        self.sampleEveryMicroSecond = 0
+        self.fileName = ''
 
     def get_mA(self, adcValue):
         _voltage = round(adcValue * self.voltageScale, 6)
@@ -41,11 +42,11 @@ class CurrentOperate:
         self.totalmAH = format(_totalmAH, '.10f')
         return self.totalmAH
 
-    def writeToFile(self, fileName):
+    def writeToFile(self):
         passFirstData = True
         _date = self.currentTable[0].split(', ')[0]
         _time = self.currentTable[0].split(', ')[1]
-        f = open(fileName, 'a+')
+        f = open(self.fileName, 'a+')
         f.write(self.currentTable[0] + "\n")
         for currentData in self.currentTable:
             currentData = currentData.split(", ")
@@ -65,10 +66,10 @@ class CurrentOperate:
 
 class TimeCtrl:
     def __init__(self):
-        self.sampleEveryMicroSecond = 343
+        self.sampleEveryMicroSecond = 0
         self.tag = 0
         self.count = 0
-        self.timeOut = 0.3
+        self.timeOut = 0
 
     def getCount(self):
         _tmp = self.count
@@ -86,6 +87,32 @@ class TimeCtrl:
     def getTime(self):
         return time.strftime("%Y/%m/%d, %H:%M:%S", time.localtime())
 
+
+class InitialSystem:
+    def __init__(self, current, timeCtrl):
+        self.createLogFile()
+        self.initHWsetting(current)
+        self.initTimeCtrl(timeCtrl)
+        self.filename = ''
+
+    def createLogFile(self):
+        self.filename = "CurrentV4_" + time.strftime("%Y%m%d%H%M", time.localtime()) + ".txt"
+        # self.filename = "CurrentV4.txt"
+        f = open(self.filename, 'w')
+        f.write('Date, Time, Tag, mA, mA/mS, mAH' + "\n")
+        f.close()
+        print('> Create File:', self.filename)
+
+    def initHWsetting(self, current):
+        current.refVoltage = 3.3
+        current.ADCresolution = 10
+        current.sampleResistor = 10    #ohm
+        current.sampleEveryMicroSecond = 343
+        current.filename = self.filename
+
+    def initTimeCtrl(self, timeCtrl):
+        timeCtrl.sampleEveryMicroSecond = 343
+        timeCtrl.timeOut = 0.3
 
 coms = serial.tools.list_ports.comports()
 for a in coms:
@@ -109,12 +136,14 @@ print('===========================================')
 current = CurrentOperate()
 timeCtrl = TimeCtrl()
 ser.flushInput()
-filename = "CurrentV4_" + time.strftime("%Y%m%d%H%M", time.localtime()) + ".txt"
-# filename = "CurrentV4.txt"
-f = open(filename, 'w')
-f.write('Date, Time, Tag, mA, mA/mS, mAH' + "\n")
-f.close()
-print('> Create File:', filename)
+# filename = "CurrentV4_" + time.strftime("%Y%m%d%H%M", time.localtime()) + ".txt"
+# # filename = "CurrentV4.txt"
+# f = open(filename, 'w')
+# f.write('Date, Time, Tag, mA, mA/mS, mAH' + "\n")
+# f.close()
+# print('> Create File:', filename)
+
+InitialSystem(current, timeCtrl)
 
 try:
     while True:
@@ -148,15 +177,15 @@ try:
                     tEnd = time.time()
                     if (tEnd - tStart) > timeCtrl.timeOut and len(currentTable) > 0:
                         tStart = time.time()
-                        print("")
-                        print("Time= " + localTime)
-                        print("Data Length= " + str(timeCtrl.tag) + "ms")
                         timeCtrl.clrTag()
                         totalmAmS = current.get_TotalmAmS(currentTable)
                         totalmAH = current.get_TotalmAH(totalmAmS)
+                        print("")
+                        print("Time= " + localTime)
+                        print("Data Length= " + str(timeCtrl.tag) + "ms")
                         print(str(totalmAmS) + " mA/mS")
                         print(str(totalmAH) + " mAH")
-                        current.writeToFile(filename)
+                        current.writeToFile(current.filename)
                         currentTable.clear()
 
 except KeyboardInterrupt:
