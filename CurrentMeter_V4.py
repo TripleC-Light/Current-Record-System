@@ -7,15 +7,15 @@ import serial.tools.list_ports
 
 class CurrentOperate:
     def __init__(self):
-        self.refVoltage = 0
-        self.ADCresolution = 0
+        self.refVoltage = 3.3
+        self.ADCresolution = 10
         self.voltageScale = self.refVoltage / (2**self.ADCresolution)
-        self.sampleResistor = 0    #ohm
+        self.sampleResistor = 10    #ohm
         self.currentTable = []
         self.tatalmAmS = 0
         self.totalmAH = 0
-        self.sampleEveryMicroSecond = 0
-        self.fileName = ''
+        self.sampleEveryMicroSecond = 343
+        self.filename = ''
 
     def get_mA(self, adcValue):
         _voltage = round(adcValue * self.voltageScale, 6)
@@ -43,10 +43,12 @@ class CurrentOperate:
         return self.totalmAH
 
     def writeToFile(self):
+    # def writeToFile(self, filename):
         passFirstData = True
         _date = self.currentTable[0].split(', ')[0]
         _time = self.currentTable[0].split(', ')[1]
-        f = open(self.fileName, 'a+')
+        f = open(self.filename, 'a+')
+        # f = open(filename, 'a+')
         f.write(self.currentTable[0] + "\n")
         for currentData in self.currentTable:
             currentData = currentData.split(", ")
@@ -66,10 +68,10 @@ class CurrentOperate:
 
 class TimeCtrl:
     def __init__(self):
-        self.sampleEveryMicroSecond = 0
+        self.sampleEveryMicroSecond = 343
         self.tag = 0
         self.count = 0
-        self.timeOut = 0
+        self.timeOut = 0.3
 
     def getCount(self):
         _tmp = self.count
@@ -92,7 +94,7 @@ class InitialSystem:
     def __init__(self, current, timeCtrl):
         self.createLogFile()
         self.initHWsetting(current)
-        self.initTimeCtrl(timeCtrl)
+        # self.initTimeCtrl(timeCtrl)
         self.filename = ''
 
     def createLogFile(self):
@@ -104,15 +106,15 @@ class InitialSystem:
         print('> Create File:', self.filename)
 
     def initHWsetting(self, current):
-        current.refVoltage = 3.3
-        current.ADCresolution = 10
-        current.sampleResistor = 10    #ohm
-        current.sampleEveryMicroSecond = 343
+        # current.refVoltage = 3.3
+        # current.ADCresolution = 10
+        # current.sampleResistor = 10    #ohm
+        # current.sampleEveryMicroSecond = 343
         current.filename = self.filename
-
-    def initTimeCtrl(self, timeCtrl):
-        timeCtrl.sampleEveryMicroSecond = 343
-        timeCtrl.timeOut = 0.3
+    #
+    # def initTimeCtrl(self, timeCtrl):
+    #     timeCtrl.sampleEveryMicroSecond = 343
+    #     timeCtrl.timeOut = 0.3
 
 coms = serial.tools.list_ports.comports()
 for a in coms:
@@ -136,6 +138,7 @@ print('===========================================')
 current = CurrentOperate()
 timeCtrl = TimeCtrl()
 ser.flushInput()
+
 # filename = "CurrentV4_" + time.strftime("%Y%m%d%H%M", time.localtime()) + ".txt"
 # # filename = "CurrentV4.txt"
 # f = open(filename, 'w')
@@ -148,7 +151,7 @@ InitialSystem(current, timeCtrl)
 try:
     while True:
         if state == 0:
-            continueTime = 2.5 * 60 * 60
+            continueTime = 30 * 60 * 60
             # continueTime = 15
             pEND = time.time()
             if exeOnlyOneTime:
@@ -177,7 +180,6 @@ try:
                     tEnd = time.time()
                     if (tEnd - tStart) > timeCtrl.timeOut and len(currentTable) > 0:
                         tStart = time.time()
-                        timeCtrl.clrTag()
                         totalmAmS = current.get_TotalmAmS(currentTable)
                         totalmAH = current.get_TotalmAH(totalmAmS)
                         print("")
@@ -185,7 +187,9 @@ try:
                         print("Data Length= " + str(timeCtrl.tag) + "ms")
                         print(str(totalmAmS) + " mA/mS")
                         print(str(totalmAH) + " mAH")
-                        current.writeToFile(current.filename)
+                        current.writeToFile()
+                        # current.writeToFile(filename)
+                        timeCtrl.clrTag()
                         currentTable.clear()
 
 except KeyboardInterrupt:
