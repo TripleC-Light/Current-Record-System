@@ -38,7 +38,7 @@ class CurrentOperate:
         return self.tatalmAmS
 
     def get_TotalmAH(self, tatalmAmS):
-        _totalmAH = (tatalmAmS / 1000) / 3600   # 先將 mAmS轉換為 mAS, 再轉換為 mAH
+        _totalmAH = (tatalmAmS / 1000) / 3600   # 先將 mA/mS轉換為 mAS, 再轉換為 mAH
         self.totalmAH = format(_totalmAH, '.10f')
         return self.totalmAH
 
