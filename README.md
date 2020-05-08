@@ -1,3 +1,3 @@
 # Current Record system
 
-<center><img src="https://github.com/TripleC-Light/CurrentMeter/blob/master/image/Hardware%20architecture.jpg?raw=true" width=600></center>
+<img src="https://github.com/TripleC-Light/Current-Record-System/blob/master/image/Hardware%20architecture.jpg?raw=true" width=600>
