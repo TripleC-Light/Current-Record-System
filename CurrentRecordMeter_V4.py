@@ -124,7 +124,7 @@ ser.set_buffer_size(rx_size=1000000)
 ser.isOpen()
 
 adcValue = 0
-currentLevel = 2  # mA
+currentLevel = 3  # mA
 
 tStart = time.time()
 tStart0 = tStart
@@ -184,7 +184,6 @@ try:
 
 except KeyboardInterrupt:
     ser.close()  # 清除序列通訊物件
-    print('再見！')
 
 ser.close()  # 清除序列通訊物件
 print('再見！')
