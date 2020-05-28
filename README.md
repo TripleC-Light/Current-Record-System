@@ -7,3 +7,7 @@ In PC, I programing in Python to receive data from Arduino, then record and calc
 System architecture shows below
 
 <img src="https://github.com/TripleC-Light/Current-Record-System/blob/master/image/Hardware%20architecture.jpg?raw=true" width=600>
+
+Arduino transmit 2 bytes every 343us that is a constant time interval,
+
+So I can know the transmit time on Python, according transmit time I can calculate the accurate power on system
