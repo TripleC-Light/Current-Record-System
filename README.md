@@ -1,4 +1,4 @@
-# Current Record system
+# Power Consumption Record system
 
 This system use ADC of Arduino to get the drop of resistor(10ohm), then use UART transmit to PC,
 
