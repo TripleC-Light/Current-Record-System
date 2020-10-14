@@ -11,3 +11,10 @@ System architecture shows below
 Arduino transmit 2 bytes every 343us that is a constant time interval,
 
 So I can know the transmit time on Python, according transmit time I can calculate the accurate power on system
+
+## About Me
+ - My Blog : [愛德華空想科學誌]
+ - E-mail : TripleC.Light@gmail.com
+ - LinkedIn : [Edward Chou](https://www.linkedin.com/in/edward-chou-42058912a)
+ - Buy Me A Coffee : [Buy Me A Coffee](https://www.buymeacoffee.com/YrFKPo2)
+ - Paypal : [Link](https://www.paypal.me/TripleCLight?locale.x=zh_TW)
